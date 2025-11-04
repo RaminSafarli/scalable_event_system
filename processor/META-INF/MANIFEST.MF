@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Created-By: Maven JAR Plugin 3.3.0
+Build-Jdk-Spec: 25
+Class-Path: amqp-client-5.27.0.jar slf4j-api-1.7.36.jar netty-transport-
+ 4.2.7.Final.jar netty-common-4.2.7.Final.jar netty-buffer-4.2.7.Final.j
+ ar netty-resolver-4.2.7.Final.jar netty-codec-4.2.7.Final.jar netty-cod
+ ec-base-4.2.7.Final.jar netty-codec-compression-4.2.7.Final.jar netty-c
+ odec-protobuf-4.2.7.Final.jar netty-codec-marshalling-4.2.7.Final.jar n
+ etty-handler-4.2.7.Final.jar netty-transport-native-unix-common-4.2.7.F
+ inal.jar postgresql-42.7.8.jar checker-qual-3.49.5.jar android-json-0.0
+ .20131108.vaadin1.jar
+Main-Class: org.processor.Main
+

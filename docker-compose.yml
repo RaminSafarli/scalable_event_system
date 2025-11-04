@@ -1,0 +1,63 @@
+version: '3.9'
+
+services:
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+
+  rabbitmq:
+    image: 'rabbitmq:4.0-management'
+    ports:
+      - '15672:15672'
+      - '5672:5672'
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics ping > /dev/null && timeout 1 bash -c 'echo > /dev/tcp/localhost/5672'"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+
+  dispatcher:
+    build: ./ticket
+    depends_on:
+      - rabbitmq
+    ports:
+      - '8081:8080'
+    environment:
+      app.rabbitmq.host: ${RABBITMQ_HOST_DOCKER}
+      app.rabbitmq.port: ${RABBITMQ_PORT_DOCKER}
+      app.rabbitmq.queue.name: ${RABBITMQ_QUEUE_NAME}
+
+
+  processor:
+    build: ./processor
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      DB_HOST_ENV: ${DOCKER_DB_HOST}
+      DB_USER_ENV: ${POSTGRES_USER}
+      DB_PASS_ENV: ${POSTGRES_PASSWORD}
+      DB_NAME_ENV: ${POSTGRES_DB}
+
+      RABBIT_HOST_ENV: ${RABBITMQ_HOST_DOCKER}
+      RABBIT_QUEUE_ENV: ${RABBITMQ_QUEUE_NAME}
+      RABBIT_PORT_ENV: ${RABBITMQ_PORT_DOCKER}
+
+
