@@ -51,6 +51,6 @@ import { sleep } from "k6";
 export default function () {
   const payload = JSON.stringify({ user_id: 123, event_id: 456 });
   const params = { headers: { "Content-Type": "application/json" } };
-  http.post("http://localhost:8081/ticket", payload, params); // API'nin çalıştığı port
+  http.post("http://localhost:8081/ticket", payload, params);
   sleep(0.1);
 }
